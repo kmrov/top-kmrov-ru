@@ -1,0 +1,106 @@
+{%load top_tags%}
+<html>
+<head>
+<title>Рейтинг популярных записей{%if nofilters%} без фильтров{%endif%} - top.kmrov.ru</title>
+<script src="/static/js/jquery-1.4.js" type="text/javascript"></script>
+<script src="/static/js/main.js" type="text/javascript"></script>
+<style type="text/css">
+input.openid {
+  background: url(/static/pix/openid-16x16.gif) no-repeat; 
+  background-position: 0 50%;
+  padding-left: 16px;
+}
+a img { border: none; }
+div.counters { font-size:10pt; }
+div.login { position:absolute;
+            top:10px;
+            right:5px; }
+div.number { float:left;
+             margin-right:4px;
+             margin-bottom:-20px;
+             position:relative;
+             top:-10px;
+             font-size:22pt;
+             color:#999999;
+              }
+div.title { margin-bottom: 2px; }
+div.disclaimer {font-size:10pt;
+                margin-left:100px;
+                margin-right:100px; }
+body, td, th { font-size:12pt;
+               font-family:Serif,Times,Times New Roman;
+               background-color:white;
+               color:black}
+a:link { font-size:12pt;
+    color:#000033;}
+div.counters a:link {font-size:10pt;
+                color:#000033; }
+a:visited { font-size:12pt;
+    color:#999999;}
+div.counters a:visited {font-size:10pt;
+                color:#999999; }
+div.login a  { font-size:12pt;
+              color:#000033 }
+div.disclaimer a { font-size:10pt;
+              color:#000033 }
+
+</style>
+</head>
+<body>
+<a href="/"><img src="/static/pix/logo.png"></a>
+<div class="login">
+{%if openid%}
+<img src="/static/pix/openid-16x16.gif"><a href="{{openid}}">{{openid|clean_url}}</a> <a href="/openid/signout/">Выйти</a><br>
+ <a href="/settings/">Настройки</a>
+    {%if nofilters%}<a href="/">С фильтрами</a>{%else%}<a href="/nofilters/">Без фильтров</a>{%endif%}
+{%else%}
+<div>Адрес ЖЖ, Я.ру, или любой другой OpenID:</div>
+<div style="position:absolute; right:5px"><form action="/openid/" method="post"><input class="openid" type="text" name="openid_url"> <input type="submit" value="Войти"></form></div>
+{%endif%}
+</div>
+<br>
+<noindex>
+<table cellspacing="16">
+{%for entry in entries%}
+<tr>
+<td>
+    <div class="number">
+    {{forloop.counter}}.
+    </div>
+    <div class="title">
+        <a href="{{entry.link}}">{{entry.title}}</a>
+        {%if openid and not nofilters%}
+            <a href="#" onclick="exclude_post('{{entry.link}}'); return false;"><img src="/static/pix/cross.png"></a>
+        {%endif%} 
+    </div>
+    {%if entry.get_cache.txt%}
+        <div class="text">{{entry.get_cache.txt|cut_entry|safe}}</div>
+    {%endif%}
+    <div class="counters">(ссылок: <a href="http://blogs.yandex.ru/search.xml?link={{entry.link}}">{{entry.links24weight|floatformat:"0"}}</a>; посещений: {{entry.visits24|floatformat:"0"}}; комментариев: {{entry.comments24|floatformat:"0"}})</div>
+    <div>
+        <a href="{{entry.author}}"><img src="{{entry.get_author.icon.url}}">{{entry.get_author.name}}</a>&nbsp;{%if openid and not nofilters%}<a href="#" onclick="exclude_author('{{entry.author}}'); return false;"><img src="/static/pix/cross.png"></a>
+        {%endif%}
+    </div>
+</td>
+<td>
+    {%if entry.get_cache.image%}<br><img src="{{entry.get_cache.image.url}}">{%endif%}
+</td>
+</tr>
+{%endfor%}
+</table>
+</noindex>
+<div class="disclaimer">
+При составлении рейтингов использовались данные, полученные с помощью <a href="http://blogs.yandex.ru/">Яндекс.Поиска по блогам</a>. Яндекс не имеет отношения к методике составления самих рейтингов. Иногда Яндекс выдает бред. Если вы считаете, что у нас что-то сломалось - <a href="mailto:nikita@kmrov.ru">пишите нам</a>.
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-13033531-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+  })();
+</script>
+</body>
+</html>
